@@ -6,6 +6,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 import database.Db;
+import models.ClassModel;
 import utility.AuthGuard;
 
 @WebServlet("/class/*")
@@ -46,11 +47,25 @@ public class ClassController extends HttpServlet {
     }
 
     protected void createClass(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/pages/create_class.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/pages/admin/create_class.jsp").forward(request, response);
     }
 
     protected void storeClass(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("/class/index");
+
+        String className = request.getParameter("class-name").toString();
+
+
+
+        try {
+            ClassModel.add(className);
+        }catch (Exception e){
+            request.setAttribute("error", e.getMessage());
+            this.createClass(request, response);
+            return;
+        }
+
+        request.setAttribute("success", "Successfully registered.");
+        this.viewClass(request, response);
     }
 
     protected void editClass(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
