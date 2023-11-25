@@ -31,5 +31,19 @@ public class ClassModel {
         return classList;
     }
 
+    public static void add(String className) throws SQLException,Exception {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT * FROM classes WHERE name = '" + className + "';");
+
+        if(set.next()){
+            throw new Exception("Class name already taken.");
+        }
+
+        con.createStatement().execute("INSERT INTO classes (name) values ('" + className + "');");
+
+    }
 
 }
