@@ -48,7 +48,7 @@
                             <img src="https://dscstudenthandbook.files.wordpress.com/2018/12/curricular-activities.jpg" alt="Collection of four insulated travel bottles on wooden shelf." class="h-full w-full object-cover object-center">
                         </div>
                         <h3 class="mt-6 text-sm text-gray-500">
-                            <a href="#">
+                            <a href="/cca/index">
                                 <span class="absolute inset-0"></span>
                                 CCA Management
                             </a>
