@@ -16,7 +16,7 @@ public class AuthGuard {
         if(cookies == null) {
             System.out.println("no cookies");
             request.setAttribute("error", "Please Login First");
-            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
             return isLogin;
         }
 
@@ -30,7 +30,7 @@ public class AuthGuard {
 
         if(!isLogin){
             request.setAttribute("error", "Please Login First");
-            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
         }
 
         return isLogin;
