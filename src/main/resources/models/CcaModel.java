@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.String;
+import java.lang.Integer;
 
 import beans.Cca;
 import beans.Advisor;
@@ -127,14 +129,111 @@ public class CcaModel {
 
         Db db = new Db();
         Connection con = db.getCon();
-
-//        ResultSet set = con.createStatement().executeQuery("SELECT * FROM cca WHERE name = '" + name + "' AND id <> " + ccaId + ";");
-//
-//        if(set.next()){
-//            throw new Exception("cca already exist");
-//        }
-
         con.createStatement().execute("UPDATE cca set name='" + name + "', description ='" + description + "', quota ='" + quota + "', advisor_id =" + advisorId + ", year= " + year + ", available_for_registration= " + availableForRegistration + ", start_time= '" + startTime + "', end_time= '" + endTime + "', day='" + day + "' WHERE id=" + ccaId +";");
+    }
+
+    public static List<Cca> getUserCca(String userId) throws SQLException {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        List<Cca> ccaList = new ArrayList<>();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT cca.*,users.name as advisor_name FROM cca JOIN users ON users.id=cca.advisor_id WHERE cca.id IN (SELECT cca_id FROM `cca_students` WHERE student_id="+userId+");");
+
+        while (set.next()){
+            Cca cca = new Cca();
+            cca.name = set.getString("name");
+            cca.description = set.getString("description");
+            cca.startTime = set.getString("start_time");
+            cca.quota = set.getString("quota");
+            cca.endTime = set.getString("end_time");
+            cca.day = set.getString("day");
+            cca.advisorName = set.getString("advisor_name");
+            ccaList.add(cca);
+        }
+
+        return ccaList;
+    }
+
+    public static List<String> getUserCcaIds(String userId) throws SQLException {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        List<String> myCcaIds = new ArrayList<>();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT cca.*,users.name as advisor_name FROM cca JOIN users ON users.id=cca.advisor_id WHERE cca.id IN (SELECT cca_id FROM `cca_students` WHERE student_id="+userId+");");
+
+        while (set.next()){
+            myCcaIds.add(set.getString("id"));
+        }
+
+        return myCcaIds;
+    }
+
+    public static List<Cca> getCcaRegistrationList() throws SQLException {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        List<Cca> ccaList = new ArrayList<>();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT cca.*,users.name as advisor_name FROM `cca` LEFT JOIN users on users.id=cca.advisor_id WHERE available_for_registration=1;");
+
+        while (set.next()){
+            Cca cca = new Cca();
+            cca.id = set.getString("id");
+            cca.name = set.getString("name");
+            cca.description = set.getString("description");
+            cca.quota = set.getString("quota");
+            cca.startTime = set.getString("start_time");
+            cca.endTime = set.getString("end_time");
+            cca.day = set.getString("day");
+            cca.advisorName = set.getString("advisor_name");
+            ccaList.add(cca);
+        }
+        return ccaList;
+    }
+
+    public static void registerCca(String ccaId, String userId) throws SQLException, Exception {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        Integer totalRegisteredStudents = 0;
+
+        ResultSet set = con.createStatement().executeQuery("SELECT COUNT(*) as total_registered_students FROM `cca_students` WHERE cca_id=1" + ccaId +";");
+
+        while (set.next()){
+            totalRegisteredStudents = Integer.parseInt(set.getString("total_registered_students"));
+        }
+
+        if(totalRegisteredStudents >= 30){
+            throw new Exception("Cannot register this CCA because the quota is already Full");
+        }
+
+        Cca toBeRegisteredCca = new Cca();
+        List<Cca> myCcaList = new ArrayList<>();
+
+        toBeRegisteredCca = getCca(ccaId);
+        myCcaList = getUserCca(userId);
+
+        for (Cca mycca: myCcaList) {
+            if(Integer.parseInt(toBeRegisteredCca.startTime.replace(":","")) >= Integer.parseInt(mycca.startTime.replace(":",""))  &&
+                Integer.parseInt(toBeRegisteredCca.startTime.replace(":","")) <= Integer.parseInt(mycca.endTime.replace(":","")) &&
+                toBeRegisteredCca.day.equalsIgnoreCase(mycca.day)){
+                throw new Exception("Cannot register this CCA because it overlaps with other registered CCA");
+            }
+        }
+
+        con.createStatement().execute("INSERT INTO cca_students (student_id,class_id,cca_id) VALUES("+userId+",(SELECT class_id from users WHERE id="+userId+"),"+ccaId+");");
+    }
+    public static void dropCca(String ccaId, String userId) throws SQLException,Exception {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+        con.createStatement().execute("DELETE FROM cca_students WHERE cca_id=" + ccaId +" AND student_id="+ userId+";");
     }
 
 }

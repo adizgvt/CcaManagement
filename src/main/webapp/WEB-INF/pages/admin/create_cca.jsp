@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="beans.Class" %>
+<%@ page import="beans.Advisor" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>

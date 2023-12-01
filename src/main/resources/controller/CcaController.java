@@ -12,6 +12,7 @@ import com.google.gson.*;
 
 import database.Db;
 import utility.AuthGuard;
+import utility.CookieUtility;
 import models.CcaModel;
 import models.ClassModel;
 import beans.Cca;
@@ -48,6 +49,9 @@ public class CcaController extends HttpServlet {
 
         else if(pathInfo.contains("/update"))
             this.updateCca(request, response);
+
+        else if(pathInfo.contains("/registration_list"))
+            this.registrationList(request, response);
 
         else if(pathInfo.contains("/register"))
             this.registerCca(request, response);
@@ -203,12 +207,61 @@ public class CcaController extends HttpServlet {
         request.setAttribute("success", "Successfully updated cca details.");
         this.viewCca(request, response);
     }
+    protected void registrationList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Cca> ccaRegistrationList = new ArrayList<>();
+        List<String> userCca = new ArrayList<>();
 
+        try {
+            ccaRegistrationList = CcaModel.getCcaRegistrationList();
+            userCca = CcaModel.getUserCcaIds(CookieUtility.getUserId(request, response));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            request.setAttribute("error", e.getMessage());
+            System.out.println(e);
+            return;
+        }
+
+        request.setAttribute("ccaRegistrationList", ccaRegistrationList);
+        request.setAttribute("userCca", userCca);
+        request.getRequestDispatcher("/WEB-INF/pages/student/register_cca.jsp").forward(request, response);
+    }
     protected void registerCca(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/pages/register_cca.jsp").forward(request, response);
+        String ccaId = request.getPathInfo().replace("/register/", "");
+
+        if(!Pattern.compile(".*\\d+.*").matcher(ccaId).matches()){
+            ccaId =  request.getAttribute("register").toString();
+        }
+
+        try {
+            CcaModel.registerCca(ccaId,CookieUtility.getUserId(request, response));
+        }
+        catch (Exception e){
+            request.setAttribute("error", e.getMessage());
+            this.registrationList(request, response);
+            return;
+        }
+        request.setAttribute("success", "CCA successfully registered.");
+        this.registrationList(request, response);
     }
 
     protected void dropCca(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("/cca/index");
+
+        String ccaId = request.getPathInfo().replace("/drop/", "");
+
+        if(!Pattern.compile(".*\\d+.*").matcher(ccaId).matches()){
+            ccaId =  request.getAttribute("drop").toString();
+        }
+
+
+        try {
+            CcaModel.dropCca(ccaId, CookieUtility.getUserId(request, response));
+        }
+        catch (Exception e){
+            request.setAttribute("error", e.getMessage());
+            this.registrationList(request, response);
+            return;
+        }
+        request.setAttribute("success", "CCA successfully dropped.");
+        this.registrationList(request, response);
     }
 }

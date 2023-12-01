@@ -16,6 +16,7 @@ import models.UserModel;
 import models.ClassModel;
 import beans.User;
 import beans.Class;
+import utility.CookieUtility;
 
 @WebServlet("/user/*")
 public class UserController extends HttpServlet {
@@ -45,10 +46,10 @@ public class UserController extends HttpServlet {
         else if(pathInfo.contains("/update"))
             this.updateUser(request, response);
 
-        else if(pathInfo.contains("/edit_user_password"))
+        else if(pathInfo.contains("/change_user_password"))
             this.editUserPassword(request, response);
 
-        else if(pathInfo.contains("/update_password"))
+        else if(pathInfo.contains("/alter_user_password"))
             this.updateUserPassword(request, response);
         else
             request.getRequestDispatcher("/WEB-INF/pages/not_found.jsp").forward(request, response);
@@ -180,10 +181,74 @@ public class UserController extends HttpServlet {
     }
 
     protected void editUserPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/pages/common/edit_user_password.jsp").forward(request, response);
+
+        User user = new User();
+
+        try {
+            user = UserModel.getUser(CookieUtility.getUserId(request, response));
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        if(user.id == null){
+            request.getRequestDispatcher("/WEB-INF/pages/not_found.jsp").forward(request, response);
+            return;
+        }
+
+        request.setAttribute("user", user);
+        request.getRequestDispatcher("/WEB-INF/pages/student/edit_profile.jsp").forward(request, response);
     }
 
     protected void updateUserPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("/user/index");
+
+        String email = request.getParameter("email").toString();
+        String oldPassword = request.getParameter("old_password").toString();
+        String newPassword = request.getParameter("new_password").toString();
+        String newPasswordConfirmation = request.getParameter("new_password_confirmation").toString();
+
+        User user = new User();
+
+        try {
+            user = UserModel.getUser(CookieUtility.getUserId(request, response));
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            request.setAttribute("error", e.getMessage());
+        }
+
+        if(user.id == null){
+            request.getRequestDispatcher("/WEB-INF/pages/not_found.jsp").forward(request, response);
+            return;
+        }
+
+        if (!oldPassword.equalsIgnoreCase(user.password)){
+            request.setAttribute("error", "Old password doesnt match");
+            this.editUserPassword(request, response);
+            return;
+        }
+
+        if (!newPassword.equalsIgnoreCase(newPasswordConfirmation)){
+            request.setAttribute("error", "New password doesnt match");
+            this.editUserPassword(request, response);
+            return;
+        }
+
+        if (newPassword.length() < 6 || newPasswordConfirmation.length() < 6){
+            request.setAttribute("error", "New password is too short");
+            this.editUserPassword(request, response);
+            return;
+        }
+
+        try {
+            UserModel.updateUserProfile(CookieUtility.getUserId(request, response), email, newPassword);
+        }catch (Exception e){
+            request.setAttribute("error", e.getMessage());
+            this.editUserPassword(request, response);
+            return;
+        }
+
+        request.setAttribute("success", "Successfully updated user profile.");
+        request.getRequestDispatcher("/WEB-INF/pages/homes/student_home.jsp").forward(request, response);
     }
 }

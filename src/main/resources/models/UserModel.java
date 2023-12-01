@@ -87,6 +87,7 @@ public class UserModel {
             user.id = set.getString("id");
             user.name = set.getString("name");
             user.classId = set.getString("class_id");
+            user.password = set.getString("password");
             user.className = set.getString("class_name");
             user.email = set.getString("email");
             user.activeStatus = set.getString("active_status");
@@ -111,5 +112,37 @@ public class UserModel {
 
     }
 
+    public static void updateUserProfile(String userId, String email, String password) throws SQLException,Exception {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT * FROM users WHERE email = '" + email + "';");
+
+        if(set.next()){
+            throw new Exception("Email already used.");
+        }
+
+        con.createStatement().execute("UPDATE users set email='" + email + "', password='" + password + "' WHERE id=" + userId + ";");
+
+    }
+
+    public static List<User> getClassMates(String userId) throws SQLException {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        List<User> classMateList = new ArrayList<>();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT * FROM users where class_id=(SELECT class_id from users where id="+userId+");");
+
+        while (set.next()){
+            User user = new User();
+            user.name = set.getString("name");
+            classMateList.add(user);
+        }
+
+        return classMateList;
+    }
 
 }
