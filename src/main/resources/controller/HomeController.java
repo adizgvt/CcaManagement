@@ -12,8 +12,10 @@ import utility.AuthGuard;
 import utility.CookieUtility;
 import beans.User;
 import beans.Cca;
+import beans.AdminDashboardData;
 import models.UserModel;
 import models.CcaModel;
+import models.DashboardModel;
 
 @WebServlet("/home")
 public class HomeController extends HttpServlet {
@@ -32,10 +34,17 @@ public class HomeController extends HttpServlet {
         List<User> classMates = new ArrayList<>();
         List<Cca> myCcas = new ArrayList<>();
         User currentUser = new User();
+        AdminDashboardData adminDashboardData = new AdminDashboardData();
 
         switch(role) {
 
             case "ADMIN":
+                try {
+                    adminDashboardData = DashboardModel.getDashboardData();
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                request.setAttribute("adminDashboardData", adminDashboardData);
                 request.getRequestDispatcher("/WEB-INF/pages/homes/admin_home.jsp").forward(request, response);
                 break;
 

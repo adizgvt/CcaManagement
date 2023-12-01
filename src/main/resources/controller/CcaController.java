@@ -141,10 +141,15 @@ public class CcaController extends HttpServlet {
         String quota = request.getParameter("quota").toString();
         String advisorID = request.getParameter("advisor_id").toString();
         String year = request.getParameter("year").toString();
-//        String availableForRegistration = request.getParameter("available_for_registration").toString();
         String startTime = request.getParameter("start_time").toString();
         String endTime = request.getParameter("end_time").toString();
         String day = request.getParameter("day").toString();
+
+        if(Integer.parseInt(startTime.replace(":","")) >= Integer.parseInt(endTime.replace(":",""))){
+            request.setAttribute("error", "Start time must be before End time.");
+            this.viewCca(request, response);
+            return;
+        }
 
         try {
             CcaModel.add(name, description, quota, advisorID, year, startTime, endTime, day);
