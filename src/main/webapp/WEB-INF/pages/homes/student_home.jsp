@@ -139,7 +139,7 @@
 </div>
 
 <!-- Modal Overlay and Content -->
-<div id="dialog" class="fixed left-0 top-0 bg-black opacity-50 hidden w-screen h-screen transition-opacity duration-500" onclick="hideDialog()">
+<div id="dialog" class="fixed left-0 top-0 backdrop-blur-xl opacity-100 hidden w-screen h-screen transition-opacity duration-500" onclick="hideDialog()">
     <div class="bg-white rounded shadow-md p-8 mx-auto my-20 w-1/4">
         <table class="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
             <thead class="hidden border-b lg:table-header-group">
@@ -168,17 +168,11 @@
     function showDialog() {
         let dialog = document.getElementById('dialog');
         dialog.classList.remove('hidden');
-        setTimeout(() => {
-            dialog.classList.remove('opacity-50');
-        }, 20);
     }
 
     function hideDialog() {
         let dialog = document.getElementById('dialog');
-        dialog.classList.add('opacity-50');
-        setTimeout(() => {
-            dialog.classList.add('hidden');
-        }, 500);
+        dialog.classList.add('hidden');
     }
 </script>
 </html>

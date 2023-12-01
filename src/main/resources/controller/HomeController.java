@@ -29,17 +29,29 @@ public class HomeController extends HttpServlet {
         String role = CookieUtility.getUserRole(request, response);
         System.out.println(role);
 
+        List<User> classMates = new ArrayList<>();
+        List<Cca> myCcas = new ArrayList<>();
+        User currentUser = new User();
+
         switch(role) {
+
             case "ADMIN":
                 request.getRequestDispatcher("/WEB-INF/pages/homes/admin_home.jsp").forward(request, response);
                 break;
+
             case "ADVISOR":
+                try {
+                    currentUser = UserModel.getUser(CookieUtility.getUserId(request, response));
+                    myCcas = CcaModel.getAdvisorCca(CookieUtility.getUserId(request, response));
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                request.setAttribute("myCcas", myCcas);
+                request.setAttribute("currentUser", currentUser);
                 request.getRequestDispatcher("/WEB-INF/pages/homes/advisor_home.jsp").forward(request, response);
                 break;
+
             case "STUDENT":
-                List<User> classMates = new ArrayList<>();
-                List<Cca> myCcas = new ArrayList<>();
-                User currentUser = new User();
                 try {
                     classMates = UserModel.getClassMates(CookieUtility.getUserId(request, response));
                     currentUser = UserModel.getUser(CookieUtility.getUserId(request, response));

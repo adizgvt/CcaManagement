@@ -156,6 +156,31 @@ public class CcaModel {
         return ccaList;
     }
 
+    public static List<Cca> getAdvisorCca(String userId) throws SQLException {
+
+        Db db = new Db();
+        Connection con = db.getCon();
+
+        List<Cca> ccaList = new ArrayList<>();
+
+        ResultSet set = con.createStatement().executeQuery("SELECT cca.*,users.name as advisor_name FROM cca JOIN users ON users.id=cca.advisor_id WHERE cca.advisor_id="+userId+";");
+
+        while (set.next()){
+            Cca cca = new Cca();
+            cca.name = set.getString("name");
+            cca.description = set.getString("description");
+            cca.startTime = set.getString("start_time");
+            cca.quota = set.getString("quota");
+            cca.endTime = set.getString("end_time");
+            cca.day = set.getString("day");
+            cca.advisorName = set.getString("advisor_name");
+            System.out.println(cca.name);
+            ccaList.add(cca);
+        }
+
+        return ccaList;
+    }
+
     public static List<String> getUserCcaIds(String userId) throws SQLException {
 
         Db db = new Db();
@@ -201,6 +226,9 @@ public class CcaModel {
         Db db = new Db();
         Connection con = db.getCon();
 
+        Cca toBeRegisteredCca = new Cca();
+        toBeRegisteredCca = getCca(ccaId);
+
         Integer totalRegisteredStudents = 0;
 
         ResultSet set = con.createStatement().executeQuery("SELECT COUNT(*) as total_registered_students FROM `cca_students` WHERE cca_id=1" + ccaId +";");
@@ -209,14 +237,11 @@ public class CcaModel {
             totalRegisteredStudents = Integer.parseInt(set.getString("total_registered_students"));
         }
 
-        if(totalRegisteredStudents >= 30){
+        if(totalRegisteredStudents >= Integer.parseInt(toBeRegisteredCca.quota)){
             throw new Exception("Cannot register this CCA because the quota is already Full");
         }
 
-        Cca toBeRegisteredCca = new Cca();
         List<Cca> myCcaList = new ArrayList<>();
-
-        toBeRegisteredCca = getCca(ccaId);
         myCcaList = getUserCca(userId);
 
         for (Cca mycca: myCcaList) {
