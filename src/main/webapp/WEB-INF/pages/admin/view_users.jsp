@@ -124,7 +124,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell"><%=userList.get(i).role%></td>
+                            <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell"><%=userList.get(i).name%></td>
                             <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell"><%=userList.get(i).email%></td>
                             <td class="whitespace-no-wrap hidden py-4 text-left text-sm text-gray-600 sm:px-3 lg:table-cell lg:text-left"><%=userList.get(i).className%></td>
                             <td class="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-500 sm:px-3 lg:table-cell"><span class="ml-2 mr-3 whitespace-nowrap rounded-full bg-<%=userList.get(i).activeStatus.equals("ACTIVE") ? "green" : "amber" %>-100 px-2 py-0.5 text-<%=userList.get(i).activeStatus.equals("ACTIVE") ? "green" : "amber" %>-800"><%=userList.get(i).activeStatus%></span></td>

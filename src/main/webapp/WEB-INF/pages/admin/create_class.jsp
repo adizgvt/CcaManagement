@@ -11,7 +11,7 @@
 <div class="m-5 sm:m-5 xl:mx-24 xl:my-16">
     <form action="/class/store" method="POST" autocomplete="off">
         <div class="border-b border-gray-900/10 pb-12">
-            <h2 class="text-base font-semibold leading-7 text-gray-900">Register Attendance</h2>
+            <h2 class="text-base font-semibold leading-7 text-gray-900">Create Class</h2>
             <p class="mt-1 text-sm leading-6 text-gray-600">Please fill-up the details at below.</p>
 
             <%if(request.getAttribute("error") != null) {%>
