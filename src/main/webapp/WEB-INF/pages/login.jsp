@@ -12,10 +12,23 @@
     <title>Login</title>
 </head>
 <body>
+<style>
+    body {
+        background-image: url('https://premfield.edu.my/wp-content/uploads/2023/12/IMG_0470-scaled.jpg');
+        background-color: rgba(0, 0, 0, 0.5);
+        background-blend-mode: multiply;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        margin: 0;
+    }
+</style>
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
-        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+<%--        <img class="mx-auto h-24 w-auto" src="https://premfield.edu.my/wp-content/uploads/2023/11/Premfield-Logo.png" alt="Premfiled">--%>
+        <img style="display: block; margin-left: auto; margin-right: auto; width: 150px; height: auto;" src="https://premfield.edu.my/wp-content/uploads/2023/11/Premfield-Logo.png" alt="Premfield">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight" style="color: white;">Sign in to your account</h2>
     </div>
 
     <%if(request.getAttribute("error") != null) {%>
@@ -43,7 +56,7 @@
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form class="space-y-6" action="/login" method="POST">
             <div>
-                <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+                <label for="email" class="block text-sm font-medium leading-6" style="color: white;">Email address</label>
                 <div class="mt-2">
                     <input id="email" name="email_login" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                 </div>
@@ -51,7 +64,7 @@
 
             <div>
                 <div class="flex items-center justify-between">
-                    <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                    <label for="password" class="block text-sm font-medium leading-6" style="color: white;">Password</label>
                 </div>
                 <div class="mt-2">
                     <input id="password" name="password_login" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
