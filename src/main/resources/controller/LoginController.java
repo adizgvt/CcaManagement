@@ -54,17 +54,12 @@ public class LoginController extends HttpServlet {
         }
 
         Cookie c1 = new Cookie("userId", user.id);
-        Cookie c2 = new Cookie("name", user.name);
         Cookie c3 = new Cookie("class", user.className);
         Cookie c4 = new Cookie("class_id", user.classId);
         Cookie c5 = new Cookie("email", user.email);
         Cookie c6 = new Cookie("role", user.role);
 
         response.addCookie(c1);
-        response.addCookie(c2);
-        response.addCookie(c3);
-        response.addCookie(c4);
-        response.addCookie(c5);
         response.addCookie(c6);
 
         response.sendRedirect("/home");
